@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteComment, dislikeComment, likeComment } from '../../redux/reducers/quotesReducer';
+import { changeCommentReaction, deleteComment } from '../../redux/reducers/quotesReducer';
 import { CommentContainer, CommentTextBlock, CommentText, ReactionButton, RemoveButton } from './CommentStyles';
 
 export default function Comment({ comment, quoteId, userId, setLoading }) {
@@ -10,14 +10,13 @@ export default function Comment({ comment, quoteId, userId, setLoading }) {
   const dispatch = useDispatch();
 
   const handleCommentReaction = async (quoteId, commentId, reaction) => {
-    if (reaction === 'like') dispatch(likeComment({ quoteId, userId, commentId }));
-    if (reaction === 'dislike') dispatch(dislikeComment({ quoteId, userId, commentId }));
-    setLoading !== null ?? setLoading(true);
+    dispatch(changeCommentReaction({quoteId, commentId, userId, reaction}))
+    setLoading(true);
   };
 
   const handleRemoveComment = (quoteId, commentId) => {
     dispatch(deleteComment({ quoteId, commentId, userId }));
-    setLoading !== null ?? setLoading(true);
+    setLoading(true);
   }
 
   const findUser = (userId) => {

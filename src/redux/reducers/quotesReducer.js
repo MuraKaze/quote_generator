@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid'; // Import uuid
 import tags from '../../Tags/tags.json'
+import { addUserBySeed } from './usersReducer';
 
 const initialState = [];
 
@@ -45,29 +46,31 @@ const quotesSlice = createSlice({
         console.log('QUOTE not Found');
       }
     },
-    likeQuote: (state, action) => {
-      const { quoteId, userId } = action.payload;
-      const existingQuote = state.find(quote => quote.id === quoteId);
+    changeQuoteReaction: (state, action) => {
+      const { quoteId, userId, reaction } = action.payload
+      const existingQuote = state.find(quote => quote.id === quoteId)
       if (existingQuote) {
-        if (existingQuote.likedBy.includes(userId)) {
-          // Remove userId if it exists in likedBy
-          existingQuote.likedBy = existingQuote.likedBy.filter(id => id !== userId);
-        } else {
-          // Add userId if it doesn't exist in likedBy
-          existingQuote.likedBy.push(userId);
+        if (reaction === 'like') {
+          if (existingQuote.dislikedBy.includes(userId)){
+            existingQuote.dislikedBy = existingQuote.dislikedBy.filter(id => id !== userId);
+          }
+          if (existingQuote.likedBy.includes(userId)){
+            existingQuote.likedBy = existingQuote.likedBy.filter(id => id !== userId);
+          }
+          else{
+            existingQuote.likedBy.push(userId);
+          }
         }
-      }
-    },
-    dislikeQuote: (state, action) => {
-      const { quoteId, userId } = action.payload;
-      const existingQuote = state.find(quote => quote.id === quoteId);
-      if (existingQuote) {
-        if (existingQuote.dislikedBy.includes(userId)) {
-          // Remove userId if it exists in likedBy
-          existingQuote.dislikedBy = existingQuote.dislikedBy.filter(id => id !== userId);
-        } else {
-          // Add userId if it doesn't exist in likedBy
-          existingQuote.dislikedBy.push(userId);
+        if (reaction === 'dislike') {
+          if (existingQuote.likedBy.includes(userId)) {
+            existingQuote.likedBy = existingQuote.likedBy.filter(id => id !== userId)
+          }
+          if (existingQuote.dislikedBy.includes(userId)){
+            existingQuote.dislikedBy = existingQuote.dislikedBy.filter(id => id !== userId)
+          }
+          else{
+            existingQuote.dislikedBy.push(userId)
+          }
         }
       }
     },
@@ -85,33 +88,42 @@ const quotesSlice = createSlice({
         existingQuote.comments = existingQuote.comments.filter(comment => !(comment.userId === userId && comment.id === commentId));
       }
     },
-    likeComment: (state, action) => {
-      const { quoteId, commentId, userId } = action.payload;
+    changeCommentReaction: (state, action) => {
+      const { quoteId, commentId, userId, reaction } = action.payload;
+      console.log(action.payload)
       const existingQuote = state.find(quote => quote.id === quoteId);
       if (existingQuote) {
         const existingComment = existingQuote.comments.find(comment => comment.id === commentId);
         if (existingComment) {
-          if (existingComment.likedBy.includes(userId)) existingComment.likedBy = existingComment.likedBy.filter(id => id !== userId);
-          else existingComment.likedBy.push(userId);
+          if (reaction === 'like') {
+            if (existingComment.dislikedBy.includes(userId)){
+              existingComment.dislikedBy = existingComment.dislikedBy.filter(id => id !== userId);
+            }
+            if (existingComment.likedBy.includes(userId)){
+              existingComment.likedBy = existingComment.likedBy.filter(id => id !== userId);
+            }
+            else{
+              existingComment.likedBy.push(userId);
+            }
+          }
+          if (reaction === 'dislike') {
+            if (existingComment.likedBy.includes(userId)) {
+              existingComment.likedBy = existingComment.likedBy.filter(id => id !== userId)
+            }
+            if (existingComment.dislikedBy.includes(userId)){
+              existingComment.dislikedBy = existingComment.dislikedBy.filter(id => id !== userId)
+            }
+            else{
+              existingComment.dislikedBy.push(userId)
+            }
+          }
         }
       }
     },
-
-    dislikeComment: (state, action) => {
-      const { quoteId, commentId, userId } = action.payload;
-      const existingQuote = state.find(quote => quote.id === quoteId);
-      if (existingQuote) {
-        const existingComment = existingQuote.comments.find(comment => comment.id === commentId);
-        if (existingComment) {
-          if (existingComment.dislikedBy.includes(userId)) existingComment.dislikedBy = existingComment.dislikedBy.filter(id => id !== userId);
-          else existingComment.dislikedBy.push(userId);
-        }
-      }
-    }
   }
 });
 
-export const { addQuote, addQuoteBySeed, editQuote, deleteQuote, getQuote, likeQuote, dislikeQuote, addComment, deleteComment, likeComment, dislikeComment } = quotesSlice.actions;
+export const { addQuote, addQuoteBySeed, editQuote, deleteQuote, getQuote, changeQuoteReaction, changeCommentReaction, addComment, deleteComment } = quotesSlice.actions;
 
 export default quotesSlice.reducer;
 
@@ -137,8 +149,31 @@ export const fetchQuotes = () => async (dispatch) => {
         tags: selectedTags,
       };
     });
+    const authorNames = [...new Set(quotes.map(quote => quote.author))];
+
+    const users = authorNames.map(authorName => {
+      const [firstName, lastName] = authorName.split(' ').slice(0, 2); // Task 1
+      const userName = firstName; // Task 2
+      const email = `${firstName}@test.com`;
+      const gender = 'Male';
+      const password = 'test';
+      const id = uuidv4();
+
+      return {
+        id,
+        firstName,
+        lastName,
+        userName,
+        gender,
+        email,
+        password
+      };
+    });
+    dispatch(addUserBySeed(users))
+    // Dispatch action to add the fetched quotes and author names
     dispatch(addQuoteBySeed(quotes));
   } catch (error) {
     console.error('Error fetching quotes:', error.message);
   }
+
 };

@@ -14,6 +14,13 @@ const usersSlice = createSlice({
       };
       state.push(newUser);
     },
+    addUserBySeed: (state, action) => {
+      state.splice(0); // Clear existing quotes
+      const users = action.payload.map(quote => ({
+        ...quote,
+      }));
+      state.push(...users);
+    },
     getUser: (state, action) => {
       const userId = action.payload;
       return state.find(user => user.id === userId);
@@ -32,6 +39,6 @@ const usersSlice = createSlice({
   }
 });
 
-export const { addUser, getUser, deleteUser, editUser } = usersSlice.actions;
+export const { addUser, getUser, deleteUser, editUser, addUserBySeed } = usersSlice.actions;
 
 export default usersSlice.reducer;

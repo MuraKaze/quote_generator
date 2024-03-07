@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown, faComment, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import { addComment, dislikeQuote, likeQuote } from '../../redux/reducers/quotesReducer';
+import { addComment, changeQuoteReaction } from '../../redux/reducers/quotesReducer';
 import { setQuote } from '../../redux/reducers/quoteReducer';
 import Comment from '../Comment';
 import {
@@ -49,10 +49,7 @@ export default function HomePage() {
   }, [dispatch, getRandomQuote, loading, quotes, randomQuote.id])
 
   const handleQuoteReaction = async (quoteId, reaction) => {
-    if (reaction === 'like')
-      dispatch(likeQuote({ quoteId, userId: user.id }));
-    if (reaction === 'dislike')
-      dispatch(dislikeQuote({ quoteId, userId: user.id }));
+    if (reaction === 'like' || reaction === 'dislike') dispatch(changeQuoteReaction({quoteId, userId: user.id, reaction}))
     setLoading(true)
   }
 

@@ -1,5 +1,27 @@
 import styled from 'styled-components';
 
+export const AuthorContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const AuthorName = styled.p`
+  margin-right: 10px;
+`;
+
+export const FollowButton = styled.button`
+  background-color: #007bff; /* Blue background color */
+  color: #fff; /* White text color */
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+`;
+
 export const CommentInput = styled.input`
   margin-right: 10px;
   margin-bottom: 10px;
@@ -60,4 +82,4 @@ export const CommentInputContainer = styled.div`
   z-index: 999; /* Ensure the container is above other UI elements */
 `;
 
-CommentInputContainer.shouldForwardProp = prop => prop !== 'top' && prop !== 'left';
+CommentInputContainer.shouldForwardProp = prop => prop !== 'top' && prop !== 'left' && prop !== 'className';
