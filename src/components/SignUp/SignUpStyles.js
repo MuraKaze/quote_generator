@@ -5,12 +5,13 @@ export const Form = styled.form`
 `;
 
 export const Input = styled.input`
-  background-color: #333;
-  color: #fff;
+  background-color: #fff;
+  color: #333;
   padding: 10px;
   border: none;
   border-radius: 4px;
-  margin-bottom: 10px;
+  margin: 10px auto;
+  width: 100%; /* Make the input full width */
 
   &:focus {
     outline: none;
@@ -19,12 +20,13 @@ export const Input = styled.input`
 `;
 
 export const Select = styled.select`
-  background-color: #333;
-  color: #fff;
+  background-color: #fff;
+  color: #333;
   padding: 10px;
   border: none;
   border-radius: 4px;
   margin-bottom: 10px;
+  width: 100%; /* Make the select full width */
 
   &:focus {
     outline: none;
@@ -33,8 +35,8 @@ export const Select = styled.select`
 `;
 
 export const Option = styled.option`
-  background-color: #333;
-  color: #fff;
+  background-color: #fff;
+  color: #333;
 `;
 
 export const ErrorMessage = styled.p`

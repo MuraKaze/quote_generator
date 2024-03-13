@@ -11,7 +11,6 @@ const followSlice = createSlice({
   reducers: {
     followTag: (state, action) => {
       const { userId, tag } = action.payload;
-      console.log(action.payload)
       const isFollowingIndex = state.tags.findIndex(entry => entry.follower === userId && entry.following === tag);
       if (isFollowingIndex === -1) {
         state.tags.push({ follower: userId, following: tag });

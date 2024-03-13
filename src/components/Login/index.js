@@ -10,9 +10,11 @@ import {
   Checkbox,
   SubmitButton
 } from './LoginStyles';
+import { logInAsAdmin } from '../../redux/reducers/adminReducer';
 
 export default function Login() {
   const dispatch = useDispatch();
+  const admin = useSelector(state => state.admin)
   const users = useSelector(state => state.users);
   const navigate = useNavigate();
 
@@ -38,10 +40,14 @@ export default function Login() {
     if (user) {
       dispatch(setUser(user));
       navigate('/Home');
+    } else if (email === admin.email && password === admin.password) {
+      dispatch(logInAsAdmin())
+      navigate('/Home');
     } else {
       alert('User not found. Please check your credentials.');
     }
-  };
+};
+
 
   return (
     <FormContainer onSubmit={handleSubmit}>

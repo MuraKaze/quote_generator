@@ -34,27 +34,6 @@ export default function SignUp({ setToggle }) {
     const { emailDuplicate, firstNameDuplicate, genderDuplicate, lastNameDuplicate, passwordDuplicate, userNameDuplicate, ...formDataToSend } = formData;
     dispatch(addUser(formDataToSend));
     setFormData(initialFormData);
-    // ADD CLOUDINARY UPLOAD
-
-    // const data = new FormData();
-    // data.append("file", formData.profilePicture);
-    // data.append(
-    //   "upload_preset",
-    //   process.env.REACT_APP_CLOUDINARY_PRESET_FOLDER_USERS
-    // );
-    // data.append("cloud_name", process.env.REACT_APP_CLOUD_NAME);
-    // await fetch(`${process.env.REACT_APP_CLOUDINARY_URL}`, {
-    //   method: "post",
-    //   body: data,
-    // })
-    // .then((res) => res.json())
-    //   .then((data) => {
-    //     setFormData({
-    //       ...formData,
-    //       profilePicture: data.url
-    //     });
-    //   })
-    //   .catch((err) => console.log("err:", err.message));
     setToggle('login')
   };
 
@@ -70,9 +49,6 @@ export default function SignUp({ setToggle }) {
       <Input type="text" id="userName" name="userName" value={formData.userName} onChange={handleChange} required />
       {formData.userNameDuplicate && <ErrorMessage>{formData.userNameDuplicate}</ErrorMessage>}
       <br/><br/>
-
-      {/* <label htmlFor="profilePicture">Profile Picture:</label><br />
-      <input type="file" id="profilePicture" name="profilePicture" onChange={handleFileChange} accept="image/*" /><br /><br /> */}
 
       <label htmlFor="gender">Gender:</label><br />
       <Select id="gender" name="gender" value={formData.gender} onChange={handleChange} required>

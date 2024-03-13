@@ -9,11 +9,20 @@ const initialState = [];
 const quotesSlice = createSlice({
   name: 'quotes',
   initialState,
+
   reducers: {
     addQuote: (state, action) => {
+      const createdDateTime = new Date();
+      const createdDate = createdDateTime.toLocaleDateString();
+      const createdTime = createdDateTime.toLocaleTimeString();
       const newQuote = {
         ...action.payload,
         id: uuidv4(), // Generate UUID for the new quote
+        createdDate,
+        createdTime,
+        likedBy: [],
+        dislikedBy: [],
+        comments: [],
       };
       state.push(newQuote);
     },
@@ -26,21 +35,21 @@ const quotesSlice = createSlice({
       state.push(...quotesWithIds);
     },
     editQuote: (state, action) => {
-      const { id, ...updatedQuote } = action.payload;
-      const existingQuote = state.find(quote => quote.id === id);
+      const { updatedQuote } = action.payload;
+      const existingQuote = state.find(quote => quote.id === updatedQuote.id);
       if (existingQuote) {
         Object.assign(existingQuote, updatedQuote);
       }
     },
     deleteQuote: (state, action) => {
-      const quoteId = action.payload;
+      const { quoteId } = action.payload;
+      console.log(state.filter(quote => quote.id !== quoteId))
       return state.filter(quote => quote.id !== quoteId);
     },
     getQuote: (state, action) => {
       const { quoteId } = action.payload;
       const existingQuote = [...state].find(quote => quote.id === quoteId);
       if (existingQuote) {
-        console.log(existingQuote)
         return existingQuote;
       } else {
         console.log('QUOTE not Found');
@@ -90,7 +99,6 @@ const quotesSlice = createSlice({
     },
     changeCommentReaction: (state, action) => {
       const { quoteId, commentId, userId, reaction } = action.payload;
-      console.log(action.payload)
       const existingQuote = state.find(quote => quote.id === quoteId);
       if (existingQuote) {
         const existingComment = existingQuote.comments.find(comment => comment.id === commentId);
@@ -130,50 +138,52 @@ export default quotesSlice.reducer;
 export const fetchQuotes = () => async (dispatch) => {
   try {
     const response = await axios.get('https://type.fit/api/quotes');
+    const users = []
     const quotes = response.data.map(quote => {
       const createdDateTime = new Date().toISOString().split('T');
-      // Generate a random number between 0 and 3 to determine the number of tags for each quote
       const numTags = Math.floor(Math.random() * 4);
-      // Shuffle the tags array to ensure randomness
       const shuffledTags = tags.sort(() => Math.random() - 0.5);
-      // Select up to numTags random tags from the shuffled array
       const selectedTags = shuffledTags.slice(0, numTags);
+
+      // Extract author and text from the response
+      const { author } = quote;
+
+      // Generate unique ID for author
+      const authorId = uuidv4();
+      const [firstName, lastName] = author.split(' ').slice(0, 2); // Task 1
+      const userName = firstName; // Task 2
+      const email = `${firstName}@test.com`;
+      // Create new user object with author details
+      const newUser = {
+        id: authorId,
+        firstName,
+        lastName, // We don't have last name in this case
+        userName, // Using author name as username
+        email, // Using author name in email
+        gender: 'Male', // Assuming all authors are male for simplicity
+        password: 'test' // Setting a default password
+      };
+      users.push(newUser)
+
+      // Update the quote object to store author's ID instead of name
       return {
         ...quote,
-        id: uuidv4(),
+        author: authorId, // Store author's ID instead of name
+        id: uuidv4(), // Generate unique ID for the quote
         createdDate: createdDateTime[0],
         createdTime: createdDateTime[1],
         likedBy: [],
         dislikedBy: [],
         comments: [],
-        tags: selectedTags,
+        tags: selectedTags
       };
     });
-    const authorNames = [...new Set(quotes.map(quote => quote.author))];
 
-    const users = authorNames.map(authorName => {
-      const [firstName, lastName] = authorName.split(' ').slice(0, 2); // Task 1
-      const userName = firstName; // Task 2
-      const email = `${firstName}@test.com`;
-      const gender = 'Male';
-      const password = 'test';
-      const id = uuidv4();
-
-      return {
-        id,
-        firstName,
-        lastName,
-        userName,
-        gender,
-        email,
-        password
-      };
-    });
-    dispatch(addUserBySeed(users))
-    // Dispatch action to add the fetched quotes and author names
+    // Dispatch action to add the fetched users and quotes
+    dispatch(addUserBySeed(users));
     dispatch(addQuoteBySeed(quotes));
   } catch (error) {
     console.error('Error fetching quotes:', error.message);
   }
-
 };
+

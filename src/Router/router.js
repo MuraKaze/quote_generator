@@ -5,6 +5,9 @@ import Welcome from '../components/Welcome';
 import Quotes from '../components/Quotes';
 import HomePage from '../components/HomePage';
 import Navbar from '../components/Navbar';
+import Report from '../components/Report';
+import Profile from '../components/Profile';
+import Tags from '../components/Tags';
 
 function AppRouter() {
   const isLoggedIn = useSelector(state => state.user.email !== '');
@@ -17,6 +20,9 @@ function AppRouter() {
         <Route path="/Welcome" element={<Welcome />} />
         <Route path="/Quotes" element={<Quotes />} />
         <Route path="/Home" element={<HomePage />}/>
+        <Route path="/Reports" element={<Report />}/>
+        <Route path="/Profile" element={<Profile />}/>
+        <Route path="/Tags" element={<Tags />}/>
       </Routes>
     </Router>
   );

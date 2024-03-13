@@ -1,21 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThumbsUp, faThumbsDown, faComment, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import { addComment, changeQuoteReaction } from '../../redux/reducers/quotesReducer';
 import { setQuote } from '../../redux/reducers/quoteReducer';
-import Comment from '../Comment';
 import {
   Button,
   ButtonContainer,
   QuoteContainer,
-  QuoteText,
-  ReactionButton,
-  CommentsContainer,
-  CommentInput,
-  CommentButton
 } from './HomePageStyles';
+import Quote from '../Quote';
 
 export default function HomePage() {
   const dispatch = useDispatch();
@@ -23,14 +15,7 @@ export default function HomePage() {
   const user = useSelector(state => state.user);
   const quotes = useSelector(state => state.quotes);
   const randomQuote = useSelector(state => state.quote)
-  const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(false)
-
-  const formatDateTime = (dateTime) => {
-    const options = { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
-    const formattedDate = new Date(dateTime).toLocaleDateString('en-US', options);
-    return formattedDate;
-  };
 
   const getRandomQuote = useCallback(() => {
     if (quotes.length > 0) {
@@ -48,48 +33,13 @@ export default function HomePage() {
     }
   }, [dispatch, getRandomQuote, loading, quotes, randomQuote.id])
 
-  const handleQuoteReaction = async (quoteId, reaction) => {
-    if (reaction === 'like' || reaction === 'dislike') dispatch(changeQuoteReaction({quoteId, userId: user.id, reaction}))
-    setLoading(true)
-  }
-
-  const handleAddComment = (quoteId, text) => {
-    dispatch(addComment({ quoteId, userId: user.id, comment: text }))
-    setLoading(true)
-    setNewComment('')
-  };
-
   return (
     <QuoteContainer>
       <div>
       {randomQuote && randomQuote.id ? (
-        <>
-        <h2>Random Quote!!</h2>
-        <p>Author: {randomQuote.author}</p>
-        <QuoteText>{randomQuote.text}</QuoteText>
-        <p>Created Date: {formatDateTime(randomQuote.createdDate)}</p>
-        <p>Tags: {randomQuote.tags.join(', ')}</p>
-        <div>
-          <ReactionButton onClick={() => handleQuoteReaction(randomQuote.id, 'like')}>
-            <FontAwesomeIcon icon={faThumbsUp} /> {randomQuote.likedBy.length}
-          </ReactionButton>
-          <ReactionButton onClick={() => handleQuoteReaction(randomQuote.id, 'dislike')}>
-            <FontAwesomeIcon icon={faThumbsDown} /> {randomQuote.dislikedBy.length}
-          </ReactionButton>
-          <FontAwesomeIcon icon={faComment} /> {randomQuote.comments.length}
-        </div>
-            <CommentsContainer>
-              <h3>Comments</h3>
-              {randomQuote.comments.map((comment, index) => (
-                <div key={index}>
-                  <Comment comment={comment} quoteId={randomQuote.id} userId={user.id} setLoading={setLoading} />
-                </div>
-              ))}
-              <CommentInput type="text" value={newComment} onChange={e => setNewComment(e.target.value)} />
-              <CommentButton onClick={() => handleAddComment(randomQuote.id, newComment)}>
-                <FontAwesomeIcon icon={faPaperPlane} />
-              </CommentButton>
-            </CommentsContainer>
+          <>
+          <h2>Random Quote!!</h2>
+            <Quote quote={randomQuote} userId={user.id}/>
           </>
         ) : (
           <p>Oops!! No Random Quote Found</p>

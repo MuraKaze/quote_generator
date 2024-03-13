@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 export const NavbarContainer = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
   background-color: #333;
   color: white;
@@ -15,7 +14,6 @@ export const Title = styled.div`
 
 export const ButtonContainer = styled.div`
   display: flex;
-  align-items: center;
 `;
 
 export const Button = styled.button`
@@ -26,11 +24,15 @@ export const Button = styled.button`
   padding: 8px 16px;
   margin-left: 10px;
   cursor: pointer;
-
   &:hover {
     background-color: #0056b3;
   }
 `;
+
+export const BackButtonContainer = styled.div`
+  display: flex;
+  margin-left: 20vh;
+`
 
 export const BackButton = styled.button`
   background-color: #f8f9fa;
@@ -38,9 +40,8 @@ export const BackButton = styled.button`
   border: 1px solid #333;
   border-radius: 4px;
   padding: 8px 16px;
-  margin-right: 10px;
+  margin-left: 10px;
   cursor: pointer;
-
   &:hover {
     background-color: #e2e6ea;
   }

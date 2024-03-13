@@ -14,6 +14,7 @@ export const FollowButton = styled.button`
   color: #fff; /* White text color */
   border: none;
   border-radius: 4px;
+  margin: auto 10px;
   padding: 5px 10px;
   cursor: pointer;
 
